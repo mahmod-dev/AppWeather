@@ -1,43 +1,39 @@
-package com.mahmouddev.appweather
+package com.mahmouddev.appweather.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.graphics.Color
+import android.content.Context
+import android.graphics.Rect
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.android.talabaty.util.LocationManager
+import com.mahmouddev.appweather.NavGraghDirections
+import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.databinding.ActivityMainBinding
-import com.mahmouddev.appweather.dbUtil.Status
-import com.mahmouddev.appweather.dbUtil.ViewModelFactory
+import com.mahmouddev.appweather.util.dbUtil.Status
+import com.mahmouddev.appweather.util.dbUtil.ViewModelFactory
 import com.mahmouddev.appweather.location.LocationHelper
 import com.mahmouddev.appweather.retrofit.ApiHelperImpl
 import com.mahmouddev.appweather.retrofit.RetrofitBuilder
 import com.mahmouddev.appweather.room.AppDatabase
 import com.mahmouddev.appweather.room.DatabaseHelperImpl
-import com.mahmouddev.appweather.util.Constants
+import com.mahmouddev.appweather.room.entity.WeatherCity
+import com.mahmouddev.appweather.util.*
 import com.mahmouddev.appweather.util.Constants.LATITUDE
 import com.mahmouddev.appweather.util.Constants.LONGITUDE
-import com.mahmouddev.appweather.util.Helper
-import com.mahmouddev.appweather.util.Helper.kelvinToCelsius
-import com.mahmouddev.appweather.util.Helper.kelvinToFahrenheit
-import com.mahmouddev.appweather.util.MyPreferences
-import com.mahmouddev.appweather.util.NotificationHelper
 import com.mahmouddev.appweather.util.ViewHelper.gone
 import com.mahmouddev.appweather.util.ViewHelper.visible
 import com.mahmouddev.appweather.viewModel.WeatherViewModel
@@ -49,8 +45,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navHostFragment: NavHostFragment
     private lateinit var viewModel: WeatherViewModel
     private lateinit var locationHelper: LocationHelper
+    private lateinit var cities :List<WeatherCity>
     private var lng: Double? = 0.0
     private var lat: Double? = 0.0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         setupBottomBar()
         initViewModel()
         locationHelper.checkLocationPermissions()
-
+        viewModel.fetchFavWeather()
+        observeFavCities()
 
         setupObserverCurrentUserWeather()
 
@@ -76,8 +75,7 @@ class MainActivity : AppCompatActivity() {
                 binding.tvCurrentCityWeather.visible()
 
         }
-
-        NotificationHelper(this).createNotification("ttt","ddd")
+        AlarmHelper.startAlarm(this)
 
     }
 
@@ -108,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                             binding.tvCurrentCityWeather.text = "Current user weather: \n" +
                                     "city: ${data.city},  humidity: ${data.humidity}\n" +
                                     "wind speed: ${data.windSpeed},  pressure: ${data.pressure} \n" +
-                                    "Temp: ${Helper.handleTemp(this,data.temp)}"
+                                    "Temp: ${Helper.handleTemp(this, data.temp)}"
 
                         }
                     }
@@ -128,8 +126,6 @@ class MainActivity : AppCompatActivity() {
         locationHelper = LocationHelper(this, object : LocationManager {
 
             override fun onLocationChanged(location: Location?) {
-                Log.e(TAG, "onLocationChanged latitude: ${location?.latitude}")
-                Log.e(TAG, "onLocationChanged longitude: ${location?.longitude}")
             }
 
             override fun getLastKnownLocation(location: Location?) {
@@ -180,10 +176,50 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(action)
 
             }
+            R.id.csvItem -> {
+                CSVHelper.exportDatabaseToCSVFile(this,cities)
+            }
         }
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
     }
 
 
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is EditText) {
+                val outRect = Rect()
+                v.getGlobalVisibleRect(outRect)
+                if (!outRect.contains(event.rawX.toInt(), event.rawY.toInt())) {
+                    Log.d("focus", "touchevent")
+                    v.clearFocus()
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(v.windowToken, 0)
+                }
+            }
+        }
+        return super.dispatchTouchEvent(event)
+    }
 
+
+    private fun observeFavCities(){
+        viewModel.getFavoriteWeather().observe(this,
+            Observer {
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let { data ->
+                            Log.e(TAG, "observeFavCities: $data", )
+                            cities = data
+                        }
+                    }
+                    Status.LOADING -> {
+
+                    }
+                    Status.ERROR -> {
+
+                    }
+                }
+            }
+        )
+    }
 }

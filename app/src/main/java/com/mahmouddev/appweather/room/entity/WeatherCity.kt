@@ -23,5 +23,16 @@ data class WeatherCity(
     var lng: Double = 0.0,
 ) : Parcelable {
 
+    companion object {
+        const val CITY = "city"
+        const val TEMP = "temp"
+        const val WIND_SPEED = "windSpeed"
+        const val HUMIDITY = "humidity"
+        const val PRESSURE = "pressure"
+        const val LAT = "lat"
+        const val LNG = "lng"
 
+         val COLUMNS =listOf("[$CITY]","[$TEMP]","[$WIND_SPEED]","[$HUMIDITY]","[$PRESSURE]","[$LAT]","[$LNG]",)
+
+    }
 }

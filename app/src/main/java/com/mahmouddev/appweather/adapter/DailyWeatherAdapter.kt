@@ -45,7 +45,6 @@ class DailyWeatherAdapter(var activity: Activity, private var data: WeatherDaysR
         fun bind(weather: WeatherDaysResponse) {
             val data = data.list[adapterPosition]
             binding.apply {
-                Log.e(TAG, "bind: ${data.dt}", )
                 tvDay.text = Helper.getFormatDate(data.dt)
                 tvHumidity.text = "${activity.getString(R.string.humidity)} ${data.humidity}"
                 tvPressure.text = "${activity.getString(R.string.pressure)} ${data.pressure}"

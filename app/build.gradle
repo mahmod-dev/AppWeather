@@ -90,4 +90,7 @@ dependencies {
     //request permission library
     implementation 'com.karumi:dexter:6.2.0'
 
+    //export to CSV
+    implementation "com.github.doyaaaaaken:kotlin-csv-jvm:0.9.0"
+
 }

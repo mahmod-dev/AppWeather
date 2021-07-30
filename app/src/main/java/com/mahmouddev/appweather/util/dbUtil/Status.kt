@@ -1,4 +1,4 @@
-package com.mahmouddev.appweather.dbUtil
+package com.mahmouddev.appweather.util.dbUtil
 
 enum class Status {
     SUCCESS,

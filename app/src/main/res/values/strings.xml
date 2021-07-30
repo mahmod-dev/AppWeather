@@ -18,4 +18,11 @@
     <string name="add_to_fav">Add to favorite</string>
     <string name="not_found_favorite_cities">Not found Favorite cities!</string>
     <string name="settings">Settings</string>
+    <string name="not_found">Not found!</string>
+    <string name="empty">Empty!</string>
+    <string name="exportToCSV">Export to CSV</string>
+
+    <string name="csv_file_generated_text">CSV file generated!</string>
+    <string name="csv_file_not_generated_text">Something went wrong. Please try again.</string>
+    <string name="no_data_csv">No data to export!</string>
 </resources>

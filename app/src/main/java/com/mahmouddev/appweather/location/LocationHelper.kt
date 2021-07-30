@@ -20,7 +20,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 
 class LocationHelper(var activity: Activity, var locationManager: LocationManager) {
-    private val INTERVAL = 4 * 1000 /* 4 secs */
+    private val INTERVAL = 10 * 1000 /* 10 secs */
     private val FAST_INTERVAL = 2000 /* 2 sec */
     private val PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION )
     private var fusedLocationClient: FusedLocationProviderClient? = null

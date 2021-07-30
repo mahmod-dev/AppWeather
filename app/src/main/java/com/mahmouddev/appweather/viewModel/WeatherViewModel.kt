@@ -2,13 +2,17 @@ package com.mahmouddev.appweather.viewModel
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.mahmouddev.appweather.dbUtil.Resource
+import com.mahmouddev.appweather.util.dbUtil.Resource
 import com.mahmouddev.appweather.retrofit.ApiHelper
-import com.mahmouddev.appweather.retrofit.SearchByCityResponse
 import com.mahmouddev.appweather.retrofit.WeatherDaysResponse
 import com.mahmouddev.appweather.room.DatabaseHelper
 import com.mahmouddev.appweather.room.entity.WeatherCity
 import com.mahmouddev.appweather.room.entity.WeatherUser
+import com.mahmouddev.appweather.util.Constants.CODE_STATUS
+import com.mahmouddev.appweather.util.Helper.trimDouble
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: DatabaseHelper) :
@@ -22,44 +26,47 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
     private val insertFavoriteWeather = MutableLiveData<Resource<List<WeatherCity>>>()
 
 
-     fun fetchSearchByCity(cityName: String) {
-         viewModelScope.launch {
-             searchByCity.postValue(Resource.loading(null))
-             try {
+    fun fetchSearchByCity(cityName: String) {
+        viewModelScope.launch {
+            searchByCity.postValue(Resource.loading(null))
+            try {
 
-                 val citiesFromApi = apiHelper?.searchByCity(cityName)
+                val citiesFromApi = apiHelper?.searchByCity(cityName)
 
-                 if (citiesFromApi?.cod == "200" && !citiesFromApi.list.isNullOrEmpty()) {
-                   val weatherCity = WeatherCity(
-                       citiesFromApi.list[0].name,
-                       citiesFromApi.list[0].main.temp,
-                       citiesFromApi.list[0].wind.speed,
-                       citiesFromApi.list[0].main.humidity,
-                       citiesFromApi.list[0].main.pressure,
-                       citiesFromApi.list[0].coord.lat,
-                       citiesFromApi.list[0].coord.lon,
+                if (citiesFromApi?.cod == CODE_STATUS && !citiesFromApi.list.isNullOrEmpty()) {
+                    val weatherCity = WeatherCity(
+                        citiesFromApi.list[0].name,
+                        citiesFromApi.list[0].main.temp,
+                        citiesFromApi.list[0].wind.speed,
+                        citiesFromApi.list[0].main.humidity,
+                        citiesFromApi.list[0].main.pressure,
+                        citiesFromApi.list[0].coord.lat,
+                        citiesFromApi.list[0].coord.lon,
 
-                       )
-                     searchByCity.postValue(Resource.success(weatherCity))
-                 } else {
-                     searchByCity.postValue(Resource.success(null))
-                 }
-             } catch (e: Exception) {
-                 Log.e(TAG, "fetchSearchByCity: ${e.message}")
+                        )
+                    searchByCity.postValue(Resource.success(weatherCity))
+                } else {
+                    searchByCity.postValue(Resource.success(null))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "fetchSearchByCity: ${e.message}")
 
-                 searchByCity.postValue(Resource.error("Something error!", null))
-             }
-         }
-     }
+                searchByCity.postValue(Resource.error("Something error!", null))
+            }
+        }
+    }
 
     fun fetchDailyWeather(cityName: String) {
         viewModelScope.launch {
+            //    CoroutineScope(Dispatchers.IO).launch {
+
+
             dailyWeather.postValue(Resource.loading(null))
             try {
 
-                val citiesFromApi = apiHelper?.dailyWeather(cityName)
+                val citiesFromApi = async { apiHelper?.dailyWeather(cityName) }.await()
 
-                if (citiesFromApi?.cod == "200" && !citiesFromApi.list.isNullOrEmpty()) {
+                if (citiesFromApi?.cod == CODE_STATUS && !citiesFromApi.list.isNullOrEmpty()) {
                     dailyWeather.postValue(Resource.success(citiesFromApi))
                 } else {
                     dailyWeather.postValue(Resource.success(null))
@@ -69,17 +76,22 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
 
                 dailyWeather.postValue(Resource.error("Something error!", null))
             }
+            //    }
         }
     }
 
     fun fetchDailyWeather(lat: Double, lng: Double) {
+        if (lat == 0.0 && lng == 0.0) return
+
         viewModelScope.launch {
+            // CoroutineScope(Dispatchers.IO).launch {
+
             dailyWeather.postValue(Resource.loading(null))
             try {
 
-                val citiesFromApi = apiHelper?.dailyWeather(lat,lng)
+                val citiesFromApi = async { apiHelper?.dailyWeather(lat, lng) }.await()
 
-                if (citiesFromApi?.cod == "200" && !citiesFromApi.list.isNullOrEmpty()) {
+                if (citiesFromApi?.cod == CODE_STATUS && !citiesFromApi.list.isNullOrEmpty()) {
                     dailyWeather.postValue(Resource.success(citiesFromApi))
                 } else {
                     dailyWeather.postValue(Resource.success(null))
@@ -89,6 +101,7 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
 
                 dailyWeather.postValue(e.message?.let { Resource.error(it, null) })
             }
+            //  }
         }
     }
 
@@ -118,6 +131,9 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
                 val citiesFromApi = dbHelper.insertCity(weather)
                 if (citiesFromApi > 0)
                     insertFavoriteWeather.postValue(Resource.success(null))
+                else
+                    insertFavoriteWeather.postValue(Resource.error("Something error!", null))
+
 
             } catch (e: Exception) {
                 Log.e(TAG, "insertFavCity: ${e.message}")
@@ -128,28 +144,33 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
     }
 
     fun fetchCurrentUserWeather(lat: Double, lng: Double) {
+        if (lat == 0.0 && lng == 0.0) return
+        val latitude = lat.trimDouble()
+        val longitude = lng.trimDouble()
         viewModelScope.launch {
             currentUserWeather.postValue(Resource.loading(null))
             try {
+                Log.e(TAG, "fetchCurrentUserWeather: $longitude, $longitude")
 
-                var userWeatherDB = dbHelper.currentUserWeather(lat, lng)
-                if (userWeatherDB == null) {
-                    val currentUserAPi = apiHelper?.currentUserLocation(lat, lng)
-                    if (currentUserAPi != null) {
-                        val weather = WeatherUser(
-                            currentUserAPi.list[0].name,
-                            currentUserAPi.list[0].main.temp,
-                            currentUserAPi.list[0].wind.speed,
-                            currentUserAPi.list[0].main.humidity,
-                            currentUserAPi.list[0].main.pressure,
-                            lat, lng,)
-                        dbHelper.insertUserWeather(weather)
-                    }
-
+                var userWeatherDB = dbHelper.currentUserWeather(latitude, longitude)
+                Log.e(TAG, "fetchCurrentUserWeather: $userWeatherDB")
+                if (userWeatherDB != null) {
+                    currentUserWeather.postValue(Resource.success(userWeatherDB))
                 }
-                 userWeatherDB = dbHelper.currentUserWeather(lat, lng)
+                val currentUserAPi = apiHelper?.currentUserLocation(latitude, longitude)
+                if (currentUserAPi != null) {
+                    val weather = WeatherUser(
+                        currentUserAPi.list[0].name,
+                        currentUserAPi.list[0].main.temp,
+                        currentUserAPi.list[0].wind.speed,
+                        currentUserAPi.list[0].main.humidity,
+                        currentUserAPi.list[0].main.pressure,
+                        latitude, longitude,
+                    )
+                    dbHelper.insertUserWeather(weather)
+                }
+                userWeatherDB = dbHelper.currentUserWeather(latitude, longitude)
                 currentUserWeather.postValue(Resource.success(userWeatherDB))
-
 
             } catch (e: Exception) {
                 Log.e(TAG, "getCurrentUserWeather: ${e.message}")
@@ -175,9 +196,9 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
         }
     }
 
-     fun getSearchByCity(): LiveData<Resource<WeatherCity>> {
-         return searchByCity
-     }
+    fun getSearchByCity(): LiveData<Resource<WeatherCity>> {
+        return searchByCity
+    }
 
     fun getDailyWeather(): LiveData<Resource<WeatherDaysResponse>> {
         return dailyWeather
@@ -189,6 +210,27 @@ class WeatherViewModel(private val apiHelper: ApiHelper?, private val dbHelper: 
 
     fun getCurrentUserWeather(): LiveData<Resource<WeatherUser>> {
         return currentUserWeather
+    }
+
+    suspend fun getTemp(lat: Double, lng: Double): Double? {
+        if (lat == 0.0 && lng == 0.0) return null
+
+        val currentUserAPi = apiHelper?.currentUserLocation(lat, lng)
+
+        return if (currentUserAPi != null)
+            currentUserAPi.list[0].main.temp
+        else null
+
+    }
+
+    fun getFavCities(): List<WeatherCity>? {
+        var weatherCity: List<WeatherCity>? = null
+        GlobalScope.launch(Dispatchers.Default) {
+         async {
+                weatherCity = dbHelper.getAllCities()
+            }.await()
+        }
+        return weatherCity
     }
 
 }

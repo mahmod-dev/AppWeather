@@ -1,4 +1,4 @@
-package com.mahmouddev.appweather.dbUtil
+package com.mahmouddev.appweather.util.dbUtil
 
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
 

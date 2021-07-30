@@ -6,6 +6,11 @@
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
 
+    <item
+        android:id="@+id/navSearchFragment"
+        android:icon="@drawable/ic_search"
+        android:title="@string/search" />
+
 
     <item
         android:id="@+id/navFavoriteFragment"

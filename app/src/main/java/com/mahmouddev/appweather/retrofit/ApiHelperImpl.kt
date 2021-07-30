@@ -11,4 +11,12 @@ class ApiHelperImpl(private val apiService: ApiService) : ApiHelper {
         return apiService.dailyWeather(cityName)
     }
 
+    override suspend fun dailyWeather(lat: Double, lon: Double): WeatherDaysResponse {
+        return apiService.dailyWeather(lat, lon)
+    }
+
+    override suspend fun currentUserLocation(lat: Double, lon: Double): SearchByCityResponse {
+        return apiService.currentUserLocation(lat, lon)
+    }
+
 }

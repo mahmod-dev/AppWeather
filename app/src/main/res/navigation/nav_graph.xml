@@ -13,5 +13,25 @@
     <fragment
         android:id="@+id/navFavoriteFragment"
         android:name="com.mahmouddev.appweather.FavoriteFragment"
-        android:label="FavoriteFragment" />
+        android:label="FavoriteFragment" >
+        <action
+            android:id="@+id/action_navFavoriteFragment_to_favoriteDetailsFragment"
+            app:destination="@id/favoriteDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navSearchFragment"
+        android:name="com.mahmouddev.appweather.SearchFragment"
+        android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/favoriteDetailsFragment"
+        android:name="com.mahmouddev.appweather.FavoriteDetailsFragment"
+        android:label="FavoriteDetailsFragment" >
+        <argument
+            android:name="weatherCity"
+            app:argType="com.mahmouddev.appweather.room.entity.WeatherCity" />
+    </fragment>
+    <fragment
+        android:id="@+id/navSettingsFragment"
+        android:name="com.mahmouddev.appweather.SettingsFragment"
+        android:label="SettingsFragment" /><action android:id="@+id/action_global_navSettingsFragment" app:destination="@id/navSettingsFragment"/>
 </navigation>

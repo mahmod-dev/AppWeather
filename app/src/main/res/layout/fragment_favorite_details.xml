@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
-    android:padding="10dp"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:background="?attr/selectableItemBackground"
-    android:layout_height="wrap_content">
+    android:padding="5dp">
 
-    <TextView
-        android:id="@+id/tvDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/red"
-        android:textSize="18sp"
-        android:layout_marginBottom="3dp"
-        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvCity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/red"
-        android:textSize="16sp"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="3dp" />
+        android:layout_marginBottom="3dp"
+        android:textColor="@color/red"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvPressure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvDay"
         android:textColor="@color/black"
         android:textSize="16sp" />
 
@@ -37,7 +31,7 @@
         android:id="@+id/tvHumidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvDay"
+        android:layout_below="@+id/tvPressure"
         android:layout_alignParentEnd="true"
         android:textColor="@color/black"
         android:textSize="16sp" />
@@ -48,6 +42,27 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvHumidity"
         android:layout_marginTop="5dp"
-        android:textColor="@color/black"
+        android:textColor="@color/purple_700"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvWind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvHumidity"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/purple_700"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvLatLng"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTemp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/teal_700"
+        android:textSize="16sp" />
+
 </RelativeLayout>
+

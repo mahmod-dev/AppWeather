@@ -1,15 +1,21 @@
 package com.mahmouddev.appweather.adapter
 
 import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.databinding.ItemWeatherBinding
 import com.mahmouddev.appweather.retrofit.DataDay
+import com.mahmouddev.appweather.retrofit.WeatherDaysResponse
+import com.mahmouddev.appweather.util.Constants
 import com.mahmouddev.appweather.util.Helper
+import com.mahmouddev.appweather.util.Helper.kelvinToCelsius
+import com.mahmouddev.appweather.util.Helper.kelvinToFahrenheit
+import com.mahmouddev.appweather.util.MyPreferences
 
-class DailyWeatherAdapter(var activity: Activity, var data: ArrayList<DataDay>) :
+class DailyWeatherAdapter(var activity: Activity, private var data: WeatherDaysResponse) :
 
     RecyclerView.Adapter<DailyWeatherAdapter.MyViewHolder>() {
     val TAG = "DailyWeatherAdapter"
@@ -25,24 +31,28 @@ class DailyWeatherAdapter(var activity: Activity, var data: ArrayList<DataDay>) 
 
     override fun onBindViewHolder(myViewHolder: MyViewHolder, i: Int) {
 
-        myViewHolder.bind(data[i])
+        myViewHolder.bind(data)
     }
 
     override fun getItemCount(): Int {
-        return data.size
+        return data.list.size
     }
 
-    inner class MyViewHolder(var binding: ItemWeatherBinding) :
+    inner class MyViewHolder(private var binding: ItemWeatherBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
 
-        fun bind(weather: DataDay) {
-
+        fun bind(weather: WeatherDaysResponse) {
+            val data = data.list[adapterPosition]
             binding.apply {
-                tvDay.text = Helper.getFormatDate(weather.dt)
-                tvHumidity.text = "${activity.getString(R.string.humidity)} ${weather.humidity}"
-                tvPressure.text = "${activity.getString(R.string.pressure)} ${weather.pressure}"
-                tvTemp.text = "${activity.getString(R.string.temp)} ${weather.temp.day}"
+                Log.e(TAG, "bind: ${data.dt}", )
+                tvDay.text = Helper.getFormatDate(data.dt)
+                tvHumidity.text = "${activity.getString(R.string.humidity)} ${data.humidity}"
+                tvPressure.text = "${activity.getString(R.string.pressure)} ${data.pressure}"
+                tvCity.text = "${activity.getString(R.string.city)} ${weather.city.name}"
+
+                    tvTemp.text = Helper.handleTemp(activity,data.temp.day)
+
             }
 
         }

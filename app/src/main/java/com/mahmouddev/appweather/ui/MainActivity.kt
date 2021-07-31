@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         setupBottomBar()
-        //initViewModel()
         locationHelper.checkLocationPermissions()
         viewModel.fetchFavWeather()
         observeFavCities()
@@ -81,18 +80,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomBar() {
         binding.bottomNavigation.setupWithNavController(navController)
     }
-
-   /* private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(
-                ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
-                    AppDatabase.getInstance(this)
-                )
-            )
-        ).get(WeatherViewModel::class.java)
-    }*/
-
 
     @SuppressLint("SetTextI18n")
     private fun setupObserverCurrentUserWeather() {

@@ -28,13 +28,11 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private lateinit var binding: FragmentMainBinding
     private val viewModel : WeatherViewModel by viewModels()
 
-  //  lateinit var viewModel: WeatherViewModel
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMainBinding.bind(view)
-     //   initViewModel()
         MyPreferences.context = requireContext()
         val lat = MyPreferences.getFloat(LATITUDE).toDouble()
         val lng = MyPreferences.getFloat(LONGITUDE).toDouble()
@@ -43,18 +41,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         searchByCity()
 
     }
-
-
-   /* private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(
-                ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
-                    AppDatabase.getInstance(requireContext())
-                )
-            )
-        ).get(WeatherViewModel::class.java)
-    }*/
 
 
     private fun setupObserverGetDailyWeather() {

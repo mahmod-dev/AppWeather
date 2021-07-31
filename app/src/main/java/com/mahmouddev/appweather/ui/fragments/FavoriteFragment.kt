@@ -21,29 +21,17 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     private lateinit var binding: FragmentFavoriteBinding
-  //  lateinit var viewModel: WeatherViewModel
     private val viewModel : WeatherViewModel by viewModels()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFavoriteBinding.bind(view)
-    //    initViewModel()
         viewModel.fetchFavWeather()
         setupObserverSearchByCity()
 
     }
 
-   /* private fun initViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(
-                ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
-                    AppDatabase.getInstance(requireContext())
-                )
-            )
-        ).get(WeatherViewModel::class.java)
-    }*/
 
     private fun initRecycleView(data:  List<WeatherCity>) {
 

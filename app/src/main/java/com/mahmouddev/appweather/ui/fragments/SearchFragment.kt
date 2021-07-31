@@ -30,22 +30,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
-        //  initViewModel()
         searchByCity()
         setupObserverSearchByCity()
         registerForContextMenu(binding.container)
     }
 
-    /* private fun initViewModel() {
-         viewModel = ViewModelProvider(
-             this,
-             ViewModelFactory(
-                 ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
-                     AppDatabase.getInstance(requireContext())
-                 )
-             )
-         ).get(WeatherViewModel::class.java)
-     }*/
 
 
     private fun searchByCity() {

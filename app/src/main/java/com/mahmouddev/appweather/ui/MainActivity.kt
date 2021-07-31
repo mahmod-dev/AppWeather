@@ -34,6 +34,7 @@ import com.mahmouddev.appweather.util.ViewHelper.visible
 import com.mahmouddev.appweather.viewModel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlin.math.ln
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     private var lng: Double? = 0.0
     private var lat: Double? = 0.0
     private var isExported = false
+    var onPermissionGrant: ((Double,Double) -> Unit)? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e(TAG, "getLastKnownLocation latitude: ${location?.latitude}")
                 Log.e(TAG, "getLastKnownLocation longitude: ${location?.longitude}")
                 if (lat != null && lng != null) {
+                    onPermissionGrant?.invoke(lat!!, lng!!)
                     viewModel.fetchCurrentUserWeather(lat!!, lng!!)
                     MyPreferences.setFloat(LATITUDE, lat!!.toFloat())
                     MyPreferences.setFloat(LONGITUDE, lng!!.toFloat())

@@ -21,6 +21,7 @@ data class WeatherCity(
     var pressure: Int = 0,
     var lat: Double = 0.0,
     var lng: Double = 0.0,
+    var description: String  = ""
 ) : Parcelable {
 
     companion object {

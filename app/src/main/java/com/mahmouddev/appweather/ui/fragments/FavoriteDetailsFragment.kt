@@ -33,7 +33,7 @@ class FavoriteDetailsFragment : Fragment(R.layout.fragment_favorite_details) {
                 "${requireActivity().getString(R.string.lat_lng)} ${weather.lat}, ${weather.lng}"
 
             tvTemp.text = Helper.handleTemp(requireActivity(),weather.temp)
-
+            tvDesc.text = weather.description
 
         }
 

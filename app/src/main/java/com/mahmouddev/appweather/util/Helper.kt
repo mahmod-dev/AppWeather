@@ -1,11 +1,8 @@
 package com.mahmouddev.appweather.util
 
-import android.app.Activity
 import android.content.Context
 import android.text.format.DateFormat
-import android.view.inputmethod.InputMethodManager
 import com.mahmouddev.appweather.R
-import java.util.*
 
 
 object Helper {

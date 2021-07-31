@@ -12,13 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.adapter.DailyWeatherAdapter
 import com.mahmouddev.appweather.databinding.FragmentMainBinding
-import com.mahmouddev.appweather.util.dbUtil.Status
 import com.mahmouddev.appweather.retrofit.WeatherDaysResponse
+import com.mahmouddev.appweather.ui.MainActivity
 import com.mahmouddev.appweather.util.Constants.LATITUDE
 import com.mahmouddev.appweather.util.Constants.LONGITUDE
 import com.mahmouddev.appweather.util.MyPreferences
 import com.mahmouddev.appweather.util.ViewHelper.gone
 import com.mahmouddev.appweather.util.ViewHelper.visible
+import com.mahmouddev.appweather.util.dbUtil.Status
 import com.mahmouddev.appweather.viewModel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +40,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         viewModel.fetchDailyWeather(lat, lng)
         setupObserverGetDailyWeather()
         searchByCity()
+
+        (activity as MainActivity?)?.onPermissionGrant={ lat, lng ->
+            viewModel.fetchDailyWeather(lat, lng)
+        }
 
     }
 
@@ -87,7 +92,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private fun searchByCity() {
         binding.etSearch.setOnEditorActionListener { textView, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                Log.e(TAG, "searchByCity: ${textView.text}",)
                 if (textView.length()>0)
                 viewModel.fetchDailyWeather(textView.text.toString())
                 else binding.etSearch.error = getString(R.string.empty)
@@ -95,7 +99,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             } else false
         }
     }
-
 
 
 }

@@ -1,20 +1,13 @@
 package com.mahmouddev.appweather.adapter
 
 import android.app.Activity
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.databinding.ItemFavoriteBinding
-import com.mahmouddev.appweather.databinding.ItemWeatherBinding
-import com.mahmouddev.appweather.retrofit.DataDay
-import com.mahmouddev.appweather.retrofit.WeatherDaysResponse
 import com.mahmouddev.appweather.room.entity.WeatherCity
-import com.mahmouddev.appweather.util.Constants
 import com.mahmouddev.appweather.util.Helper
-import com.mahmouddev.appweather.util.Helper.kelvinToCelsius
-import com.mahmouddev.appweather.util.Helper.kelvinToFahrenheit
 import com.mahmouddev.appweather.util.MyPreferences
 
 class FavoriteAdapter(var activity: Activity, private var data: List<WeatherCity>) :

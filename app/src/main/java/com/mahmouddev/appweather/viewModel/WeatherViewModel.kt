@@ -42,6 +42,7 @@ class WeatherViewModel @ViewModelInject constructor(
                             citiesFromApi.list[0].main.pressure,
                             citiesFromApi.list[0].coord.lat,
                             citiesFromApi.list[0].coord.lon,
+                            citiesFromApi.list[0].weather[0].description,
 
                             )
                         searchByCity.postValue(Resource.success(weatherCity))

@@ -59,5 +59,14 @@
         android:textColor="@color/teal_700"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvLatLng"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/purple_500"
+        android:textSize="16sp" />
+
 </RelativeLayout>
 

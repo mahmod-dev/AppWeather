@@ -12,8 +12,8 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -24,12 +24,7 @@ import com.mahmouddev.appweather.NavGraghDirections
 import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.databinding.ActivityMainBinding
 import com.mahmouddev.appweather.util.dbUtil.Status
-import com.mahmouddev.appweather.util.dbUtil.ViewModelFactory
 import com.mahmouddev.appweather.location.LocationHelper
-import com.mahmouddev.appweather.retrofit.ApiHelperImpl
-import com.mahmouddev.appweather.retrofit.RetrofitBuilder
-import com.mahmouddev.appweather.room.AppDatabase
-import com.mahmouddev.appweather.room.DatabaseHelperImpl
 import com.mahmouddev.appweather.room.entity.WeatherCity
 import com.mahmouddev.appweather.util.*
 import com.mahmouddev.appweather.util.Constants.LATITUDE
@@ -37,17 +32,21 @@ import com.mahmouddev.appweather.util.Constants.LONGITUDE
 import com.mahmouddev.appweather.util.ViewHelper.gone
 import com.mahmouddev.appweather.util.ViewHelper.visible
 import com.mahmouddev.appweather.viewModel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     val TAG = "MainActivity"
+    private val viewModel : WeatherViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var navHostFragment: NavHostFragment
-    private lateinit var viewModel: WeatherViewModel
     private lateinit var locationHelper: LocationHelper
     private lateinit var cities :List<WeatherCity>
     private var lng: Double? = 0.0
     private var lat: Double? = 0.0
+    private var isExported = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.findNavController()
         setupBottomBar()
-        initViewModel()
+        //initViewModel()
         locationHelper.checkLocationPermissions()
         viewModel.fetchFavWeather()
         observeFavCities()
@@ -83,16 +82,16 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setupWithNavController(navController)
     }
 
-    private fun initViewModel() {
+   /* private fun initViewModel() {
         viewModel = ViewModelProvider(
             this,
             ViewModelFactory(
-                ApiHelperImpl(RetrofitBuilder.apiService), DatabaseHelperImpl(
+                ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
                     AppDatabase.getInstance(this)
                 )
             )
         ).get(WeatherViewModel::class.java)
-    }
+    }*/
 
 
     @SuppressLint("SetTextI18n")
@@ -177,7 +176,15 @@ class MainActivity : AppCompatActivity() {
 
             }
             R.id.csvItem -> {
-                CSVHelper.exportDatabaseToCSVFile(this,cities)
+
+                GlobalScope.launch(Dispatchers.Main) {
+                    isExported =true
+                    viewModel.fetchFavWeather()
+
+                }
+
+
+
             }
         }
         return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
@@ -210,6 +217,11 @@ class MainActivity : AppCompatActivity() {
                         it.data?.let { data ->
                             Log.e(TAG, "observeFavCities: $data", )
                             cities = data
+                            if (isExported){
+                                CSVHelper.exportDatabaseToCSVFile(this@MainActivity,cities)
+                                isExported= false
+                            }
+
                         }
                     }
                     Status.LOADING -> {

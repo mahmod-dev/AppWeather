@@ -2,8 +2,9 @@ package com.mahmouddev.appweather.room
 
 import com.mahmouddev.appweather.room.entity.WeatherCity
 import com.mahmouddev.appweather.room.entity.WeatherUser
+import javax.inject.Inject
 
-class DatabaseHelperImpl(private val appDatabase: AppDatabase) : DatabaseHelper {
+class DatabaseHelperImpl @Inject constructor(private val appDatabase: AppDatabase) : DatabaseHelper {
     override suspend fun getAllCities(): List<WeatherCity>? {
        return appDatabase.daoWeather().getAllCities()
     }

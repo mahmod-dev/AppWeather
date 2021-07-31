@@ -1,7 +1,9 @@
 package com.mahmouddev.appweather.retrofit
 
+import javax.inject.Inject
 
-class ApiHelperImpl(private val apiService: ApiService) : ApiHelper {
+
+class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : ApiHelper {
 
     override suspend fun searchByCity(cityName: String): SearchByCityResponse {
         return apiService.searchByCity(cityName)

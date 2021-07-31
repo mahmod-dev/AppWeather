@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.mahmouddev.appweather.receiver.TempReceiver
+import com.mahmouddev.appweather.util.Constants.DAILY
 import java.util.*
 
 
@@ -29,7 +30,7 @@ object AlarmHelper {
         alarmManager!!.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            1000 * 60 * 60 * 24, // repeating every 24 hour
+            DAILY, // repeating every 24 hour
             pendingIntent
         )
     }

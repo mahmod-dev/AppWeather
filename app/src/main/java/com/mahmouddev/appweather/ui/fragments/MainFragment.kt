@@ -1,4 +1,4 @@
-package com.mahmouddev.appweather
+package com.mahmouddev.appweather.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -6,37 +6,35 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mahmouddev.appweather.R
 import com.mahmouddev.appweather.adapter.DailyWeatherAdapter
 import com.mahmouddev.appweather.databinding.FragmentMainBinding
 import com.mahmouddev.appweather.util.dbUtil.Status
-import com.mahmouddev.appweather.util.dbUtil.ViewModelFactory
-import com.mahmouddev.appweather.retrofit.ApiHelperImpl
-import com.mahmouddev.appweather.retrofit.RetrofitBuilder
 import com.mahmouddev.appweather.retrofit.WeatherDaysResponse
-import com.mahmouddev.appweather.room.AppDatabase
-import com.mahmouddev.appweather.room.DatabaseHelperImpl
 import com.mahmouddev.appweather.util.Constants.LATITUDE
 import com.mahmouddev.appweather.util.Constants.LONGITUDE
 import com.mahmouddev.appweather.util.MyPreferences
 import com.mahmouddev.appweather.util.ViewHelper.gone
 import com.mahmouddev.appweather.util.ViewHelper.visible
 import com.mahmouddev.appweather.viewModel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainFragment : Fragment(R.layout.fragment_main) {
     private val TAG = "MainFragment"
     private lateinit var binding: FragmentMainBinding
+    private val viewModel : WeatherViewModel by viewModels()
 
-    lateinit var viewModel: WeatherViewModel
+  //  lateinit var viewModel: WeatherViewModel
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentMainBinding.bind(view)
-        initViewModel()
+     //   initViewModel()
         MyPreferences.context = requireContext()
         val lat = MyPreferences.getFloat(LATITUDE).toDouble()
         val lng = MyPreferences.getFloat(LONGITUDE).toDouble()
@@ -47,16 +45,16 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     }
 
 
-    private fun initViewModel() {
+   /* private fun initViewModel() {
         viewModel = ViewModelProvider(
             this,
             ViewModelFactory(
-                ApiHelperImpl(RetrofitBuilder.apiService), DatabaseHelperImpl(
+                ApiHelperImpl(AppModule.apiService), DatabaseHelperImpl(
                     AppDatabase.getInstance(requireContext())
                 )
             )
         ).get(WeatherViewModel::class.java)
-    }
+    }*/
 
 
     private fun setupObserverGetDailyWeather() {
@@ -71,7 +69,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                             return@Observer
                         }
                         if (it.data==null)
-                            Toast.makeText(requireContext(),R.string.not_found,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.not_found,Toast.LENGTH_SHORT).show()
 
                     }
                     Status.LOADING -> {

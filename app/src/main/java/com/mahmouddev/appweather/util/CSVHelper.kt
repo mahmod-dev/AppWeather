@@ -1,6 +1,7 @@
 package com.mahmouddev.appweather.util
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.mahmouddev.appweather.R
@@ -12,6 +13,7 @@ import java.io.File
 object CSVHelper {
 
     fun exportDatabaseToCSVFile(context: Context, data: List<WeatherCity>?) {
+        Log.e("TAG", "exportDatabaseToCSVFile: ", )
         val csvFile = generateFile(context, CSV_FILE_NAME)
         if (csvFile != null) {
             exportFavoriteCitiesToCSVFile(context, csvFile, data)
@@ -57,8 +59,6 @@ object CSVHelper {
             } else
                 Toast.makeText(context, context.getString(R.string.no_data_csv), Toast.LENGTH_SHORT)
                     .show()
-
-
         }
 
     }

@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/navHomeFragment"
-        android:name="com.mahmouddev.appweather.MainFragment"
+        android:name="com.mahmouddev.appweather.ui.fragments.MainFragment"
         android:label="fragment_favorite"
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/navFavoriteFragment"
-        android:name="com.mahmouddev.appweather.FavoriteFragment"
+        android:name="com.mahmouddev.appweather.ui.fragments.FavoriteFragment"
         android:label="FavoriteFragment" >
         <action
             android:id="@+id/action_navFavoriteFragment_to_favoriteDetailsFragment"
@@ -20,11 +20,11 @@
     </fragment>
     <fragment
         android:id="@+id/navSearchFragment"
-        android:name="com.mahmouddev.appweather.SearchFragment"
+        android:name="com.mahmouddev.appweather.ui.fragments.SearchFragment"
         android:label="SearchFragment" />
     <fragment
         android:id="@+id/favoriteDetailsFragment"
-        android:name="com.mahmouddev.appweather.FavoriteDetailsFragment"
+        android:name="com.mahmouddev.appweather.ui.fragments.FavoriteDetailsFragment"
         android:label="FavoriteDetailsFragment" >
         <argument
             android:name="weatherCity"
@@ -32,6 +32,6 @@
     </fragment>
     <fragment
         android:id="@+id/navSettingsFragment"
-        android:name="com.mahmouddev.appweather.SettingsFragment"
+        android:name="com.mahmouddev.appweather.ui.fragments.SettingsFragment"
         android:label="SettingsFragment" /><action android:id="@+id/action_global_navSettingsFragment" app:destination="@id/navSettingsFragment"/>
 </navigation>

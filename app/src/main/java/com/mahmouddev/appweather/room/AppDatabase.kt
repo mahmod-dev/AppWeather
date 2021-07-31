@@ -14,27 +14,4 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun daoWeather(): DaoWeather
 
 
-
-    companion object {
-        private var INSTANCE: AppDatabase? = null
-
-        fun getInstance(context: Context): AppDatabase {
-            if (INSTANCE == null) {
-                synchronized(this) {
-                    INSTANCE = buildRoomDB(context)
-                }
-            }
-
-            return INSTANCE!!
-        }
-
-        private fun buildRoomDB(context: Context): AppDatabase {
-            return Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                "db-weather"
-            ).build()
-        }
-    }
-
 }

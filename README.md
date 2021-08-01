@@ -11,6 +11,7 @@
 - Adding Navigation Component
 - Easy to convert between Celsius & Fahrenheit and  vice versa
 - Using Dagger Hilt as dependency injection
+- -using coroutines library to deal with threading
 - Adding some unit testing on room database
 - Export cities and their weather data as CSV file and open it by excel
 
